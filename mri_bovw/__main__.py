@@ -36,4 +36,4 @@ if __name__ == "__main__":
 
     all_features["time_elapsed"] = b-a
         
-    #print(json.dumps(all_features,indent=2))
+    print(json.dumps(all_features))
