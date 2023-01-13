@@ -29,8 +29,8 @@ if __name__ == "__main__":
         responses = responses[response_sort]
         positions = positions[response_sort]
         # store in dict
-        all_features["positions"].append(positions)
-        all_features["responses"].append(responses)
+        all_features["positions"].append(positions.tolist())
+        all_features["responses"].append(responses.tolist())
         all_features["slices"].append(features.tolist())
     b = time.time()
 
