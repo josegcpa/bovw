@@ -22,7 +22,7 @@ def filter_keypoints(kps):
     dists[dists == 0] = np.inf
 
 def get_akaze_features(image):
-    detector = cv2.AKAZE_create(threshold=0.002)
+    detector = cv2.AKAZE_create()
     keypoints,features = detector.detectAndCompute(image,None)
     return keypoints,features
 

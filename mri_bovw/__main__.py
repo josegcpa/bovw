@@ -9,6 +9,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     
     parser.add_argument("--image_path",required=True)
+    parser.add_argument("--method",default="sift",
+                        choices=["sift","kaze","akaze"])
     
     args = parser.parse_args()
     
