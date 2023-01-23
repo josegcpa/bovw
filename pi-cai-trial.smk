@@ -5,8 +5,8 @@ from glob import glob
 id_pattern = "[0-9]+_[0-9]+"
 descriptor_dir = "descriptors"
 all_ids = glob("/home/jose_almeida/data/PI-CAI/dataset/*/*")[:200]
-detector_method = "akaze"
-descriptor_method = "akaze"
+detector_method = "fast"
+descriptor_method = "sift"
 
 image_correspondence = {
     "t2":{},
@@ -38,9 +38,10 @@ rule get_descriptors:
         os.path.join(descriptor_dir,"{seq_id}","{patient_id}.npy")
     shell:
         """
-        python -m mri_bovw \
+        python -m mri_bovw.keypoint \
             --image_path {input} \
             --method_detector {detector_method} \
             --method_descriptor {descriptor_method} \
-            --output_npy {output}
+            --output_npy {output} \
+            --retrieve_top_k 500
         """

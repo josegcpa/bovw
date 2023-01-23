@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "mri_bovw"
+version = "0.1.0"
+description = ""
+authors = ["josegcpa","NMVRodrigues"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+numpy = "^1.24.1"
+opencv-contrib-python = "^4.7.0.68"
+tqdm = "^4.64.1"
+scikit-learn = "1.2.0"
+SimpleITK = "2.2.1"
+scipy = "^1.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+mri_bovw_keypoints = "mri_bovw.keypoint.__main__:main"
