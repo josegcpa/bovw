@@ -3,6 +3,7 @@ import joblib
 from sklearn.cluster import MiniBatchKMeans,Birch
 from sklearn.base import BaseEstimator
 from tqdm import tqdm
+from pathlib import Path
 
 from ..data.lib import DescriptorGenerator,CachedDescriptorGenerator
 from typing import Union
@@ -86,4 +87,6 @@ def main():
         early_stopping=args.early_stopping)
 
     if args.output_path is not None:
+        p = Path(args.output_path)
+        p.parent.mkdir(parents=True,exist_ok=True)
         joblib.dump(algo,filename=args.output_path)
