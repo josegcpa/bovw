@@ -57,8 +57,16 @@ def get_kaze_keypoints(image):
     return keypoints
 
 def get_features_from_detector(detector, keypoints, image):
-    features = detector.compute(image,keypoints)
-    return features
+    kps,features = detector.compute(image,keypoints)
+    return kps,features
+
+def filter_keypoints(kps,k):
+    r = np.array([kp.response for kp in kps])
+    s = np.argsort(-r)
+    if k < s.shape[0]:
+        s = s[:k]
+    kps = [kps[i] for i in s]
+    return kps
 
 def get_features(image,descriptor):
     descriptor = descriptor.lower()
@@ -70,8 +78,13 @@ def get_features(image,descriptor):
     kps,features = feature_extractors[descriptor](image)
     return kps,features
 
-def get_features(image, detector, descriptor):
+def get_features(image,detector,descriptor,retrieve_top_k=None):
     detector = detector.lower()
+    if descriptor is None:
+        if detector == "fast":
+            descriptor = "sift"
+        else:
+            descriptor = detector
     descriptor = descriptor.lower()
     image_detectors = {
         "sift":get_sift_keypoints,
@@ -85,5 +98,11 @@ def get_features(image, detector, descriptor):
     assert detector.lower() in image_detectors
     assert descriptor.lower() in feature_extractors
     kps = image_detectors[detector](image)
-    features =  get_features_from_detector(feature_extractors[descriptor], kps, image)
+    if retrieve_top_k is not None:
+        kps = filter_keypoints(kps,retrieve_top_k)
+    if len(kps) > 0:
+        kps,features = get_features_from_detector(
+            feature_extractors[descriptor],kps,image)
+    else:
+        features = []
     return kps,features
