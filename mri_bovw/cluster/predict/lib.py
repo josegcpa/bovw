@@ -23,7 +23,7 @@ def main():
             for i,s in enumerate(slices):
                 output = np.zeros([n_clusters],dtype=np.int32)
                 if len(s.shape) == 2:
-                    cluster_assignment = algo.predict(s.astype(np.float32))
+                    cluster_assignment = algo.predict(s.astype(np.float32) / 255.)
                     for u,c in zip(*np.unique(cluster_assignment,return_counts=True)):
                         output[u] += c
                     output = ",".join(output.astype(str))
