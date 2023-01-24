@@ -22,27 +22,55 @@ To install these packages, [`poetry`](https://python-poetry.org/) is recommended
 
 ## Command line interface usage (recommended)
 
-### Bag of visual words (a.k.a. bag of features)
+### 1. Bag of visual words (a.k.a. bag of features)
 
-#### Feature extraction
+At the beginning of each section we define a couple of terms in `code notation` to simplify references to inputs and outputs between sections. Each module has a `--help` flag that lists the available arguments and flags.
 
-To extract features from a SimpleITK-readable image (`nii`, `nii.gz`, `mha`), use the `python -m mri_bovw.keypoint` module. Command line options are made explicit `python -m mri_bovw.keypoint --help`. This will produce a `.npy` file containing three lists of arrays and one float (runtime). Each list of arrays has one array for each slice and is composed in the following way (here $N_i$ is the number of detected keypoints in slice $i$ and $p$ is the size of the descriptor used to describe each keypoint):
+#### 1.1 Feature extraction
+
+```
+input: a (set of) MRI volume(s)
+output: descriptor file
+```
+
+To extract features from a SimpleITK-readable image (`nii`, `nii.gz`, `mha`), use the `python -m mri_bovw.keypoint` module. This will produce a `descriptor file` (`.npy`) containing three lists of arrays and one float (runtime). Each list of arrays has one array for each slice and is composed in the following way (here $N_i$ is the number of detected keypoints in slice $i$ and $p$ is the size of the descriptor used to describe each keypoint):
 
 1. An $N_i \times 2$-sized array containing the positions of the keypoints in the 2D plane
 2. An $N_i$-sized array containing the responses (i.e. edge-ness) of each keypoint
 3. An $N_i \times p$-sized array containg the keypoint descriptors.
 
-#### Clustering
+#### 1.2. Clustering
 
-##### Inferring the cluster centres from descriptor files
+##### 1.2.1. Inferring the cluster centres from descriptor files
 
-Clustering can be run using `python -m mri_bovw.cluster`. Command line options are made explicit `python -m mri_bovw.cluster --help`. Clustering can be ran on a list of input files (i.e. `python -m mri_bovw.cluster descriptors/*npy` if you would like to include a whole folder).
+```
+input: a set of descriptor files
+output: clustering model
+```
 
-##### Assigning clusters to descriptor files
+Clustering can be run using `python -m mri_bovw.cluster`. Clustering can be ran on a list of input `descriptor files` (i.e. `python -m mri_bovw.cluster descriptors/*npy` if you would like to include a whole folder).
 
-To assign clusters to the descriptors in each file, `python -m mri_bovw.cluster.predict` is the script that should be used. It has a similar interface to `python -m mri_bovw.cluster` but accepts only two arguments: a list of input paths (`--input_paths`) and the path to the model output from the clustering (`--model_path`)
+##### 1.2.2. Counting clusters in descriptor files
 
-#### TF-IDF (missing)
+```
+input: a set of descriptor files
+input: clustering model
+output: cluster counts
+```
+
+To assign to and count clusters in the `descriptor files`, `python -m mri_bovw.cluster.predict` is the module that should be used. It has a similar interface to `python -m mri_bovw.cluster` but accepts only two obligatory arguments: a list of input paths (`--input_paths`) and the path to the `clustering model` (`--model_path`). A third, optional argument (`--output_path`) should be specified to produce the `cluster counts`, which can be used in the following steps.
+
+#### 1.3. Term-frequency * inverse term frequency (tf-idf)
+
+```
+input: cluster counts
+input (optional): tf-idf file
+output: tf-idf file
+```
+
+Using the output from the previous step (`descriptor files`), we can calculate the `[tf-idf](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) files`. This quantity is, essentially, the frequency of different descriptors across images weighed by the scarcity (inverse document frequency) of each. 
+
+To calculate the `tf-idf files` for each volume, you can simply run `python -m mri_bovw.cluster.tf_idf`. To necessary arguments are: the `--input_path`, which should be the output produced in the previous step when using the `--output_path` flag, and the `--output_path`, which is the produced tf-idf vectors for each volume and the idf used to calculate it (the recommended way of loading the `tf-idf` file is using `joblib.load`, which produces a dictionary containing the tf-idf values as a dictionary (under the `features` key) and the idf values used to calculate this (under the `idf` key)). By storing the idf together with the tf-idf, we can ensure that this is transferrable to other (validation or testing datasets) - to calculate the `tf-idf file` of a `cluster count file` using the idf calculated with another dataset, we simply have to use the `--idf_source` flag pointing to the source tf-idf output.
 
 ### Multiple instance learning of virtual phenotypes
 
