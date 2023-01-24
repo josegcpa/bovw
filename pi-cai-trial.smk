@@ -4,7 +4,7 @@ from glob import glob
 
 id_pattern = "[0-9]+_[0-9]+"
 descriptor_dir = "descriptors"
-all_ids = glob("/home/jose_almeida/data/PI-CAI/dataset/*/*")[:200]
+all_ids = glob("/home/nuno/Desktop/dataset/*/*")[:200]
 detector_method = "fast"
 descriptor_method = "sift"
 
