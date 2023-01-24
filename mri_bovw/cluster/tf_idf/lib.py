@@ -9,7 +9,6 @@ __maintainer__ = ["José Guilherme de Almeida", "Nuno Rodrigues"]
 import joblib
 import numpy as np
 from pathlib import Path
-from tqdm import tqdm
 
 def main():
     import argparse
