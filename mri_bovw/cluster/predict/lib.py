@@ -29,9 +29,12 @@ def main():
         description=main.__doc__)
 
     parser.add_argument("--input_paths", dest="input_paths", required=True,
-                        nargs="+")
-    parser.add_argument("--output_path", dest="output_path")
-    parser.add_argument("--model_path", dest="model_path", required=True)
+                        nargs="+",
+                        help="Space-separated list of paths to descriptors.")
+    parser.add_argument("--output_path", dest="output_path",
+                        help="Path to cluster assignment counts.")
+    parser.add_argument("--model_path", dest="model_path", required=True,
+                        help="Path to clustering model.")
 
     args = parser.parse_args()
 
