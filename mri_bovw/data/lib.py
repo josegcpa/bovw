@@ -204,14 +204,13 @@ class CachedDescriptorGenerator(DescriptorGenerator):
                 self.cache[self.paths[idx]],self.batch_size,self.rng)
     
     @staticmethod
-    def return_random_descriptors_per_slice(
+    def return_random_descriptors(
         slice_list:List[int],
         batch_size:int=None,
         rng:np.random.Generator=None)->np.ndarray:
-        """Returns a set of random descriptors for each slice in the path.
+        """Returns a set of random descriptors from the list of descriptors.
 
-        :param List[int] slice_list: list of slice indices from which 
-            descriptors will be retrieved.
+        :param List[int] slice_list: list of list of slice descriptors.
         :param int batch_size: size of the output, defaults to None
         :param np.random.Generator rng: random number generator, defaults to 
             None

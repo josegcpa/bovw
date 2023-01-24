@@ -58,7 +58,6 @@ def main():
                     cluster_f[i] = output
                     output = ",".join(output.astype(str))
                     output = "{},{},{}".format(path, i, output)
-                    print(output)
             frequency[path] = cluster_f
 
     if args.output_path is not None:
