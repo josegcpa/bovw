@@ -31,7 +31,7 @@ def main():
     parser.add_argument("--input_paths", dest="input_paths", required=True,
                         nargs="+",
                         help="Space-separated list of paths to descriptors.")
-    parser.add_argument("--output_path", dest="output_path",
+    parser.add_argument("--output_path", dest="output_path",default=None,
                         help="Path to cluster assignment counts.")
     parser.add_argument("--model_path", dest="model_path", required=True,
                         help="Path to clustering model.")
@@ -56,11 +56,17 @@ def main():
                                                return_counts=True)):
                         output[u] += c
                     cluster_f[i] = output
-                    output = ",".join(output.astype(str))
-                    output = "{},{},{}".format(path, i, output)
             frequency[path] = cluster_f
 
     if args.output_path is not None:
         p = Path(args.output_path)
         p.parent.mkdir(parents=True, exist_ok=True)
         joblib.dump(frequency, filename=args.output_path)
+    else:
+        for k in frequency:
+            slices = frequency[k]
+            for s in slices:
+                output = slices[s]
+                output = ",".join(output.astype(str))
+                output = "{},{},{}".format(k, s, output)
+                print(output)
