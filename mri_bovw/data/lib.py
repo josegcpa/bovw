@@ -203,6 +203,7 @@ class CachedDescriptorGenerator(DescriptorGenerator):
         batch_size:int=None,
         rng:np.random.Generator=None)->np.ndarray:
         """Returns a set of random descriptors from the list of descriptors.
+
         :param List[int] slice_list: list of list of slice descriptors.
         :param int batch_size: size of the output, defaults to None
         :param np.random.Generator rng: random number generator, defaults to

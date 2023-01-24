@@ -22,7 +22,9 @@ To install these packages, [`poetry`](https://python-poetry.org/) is recommended
 
 ## Command line interface usage (recommended)
 
-### Feature extraction
+### Bag of visual words (a.k.a. bag of features)
+
+#### Feature extraction
 
 To extract features from a SimpleITK-readable image (`nii`, `nii.gz`, `mha`), use the `python -m mri_bovw.keypoint` module. Command line options are made explicit `python -m mri_bovw.keypoint --help`. This will produce a `.npy` file containing three lists of arrays and one float (runtime). Each list of arrays has one array for each slice and is composed in the following way (here $N_i$ is the number of detected keypoints in slice $i$ and $p$ is the size of the descriptor used to describe each keypoint):
 
@@ -30,29 +32,18 @@ To extract features from a SimpleITK-readable image (`nii`, `nii.gz`, `mha`), us
 2. An $N_i$-sized array containing the responses (i.e. edge-ness) of each keypoint
 3. An $N_i \times p$-sized array containg the keypoint descriptors.
 
-### Clustering
+#### Clustering
 
-#### Inferring the cluster centres from descriptor files
+##### Inferring the cluster centres from descriptor files
 
 Clustering can be run using `python -m mri_bovw.cluster`. Command line options are made explicit `python -m mri_bovw.cluster --help`. Clustering can be ran on a list of input files (i.e. `python -m mri_bovw.cluster descriptors/*npy` if you would like to include a whole folder).
 
-#### Assigning clusters to descriptor files
+##### Assigning clusters to descriptor files
 
 To assign clusters to the descriptors in each file, `python -m mri_bovw.cluster.predict` is the script that should be used. It has a similar interface to `python -m mri_bovw.cluster` but accepts only two arguments: a list of input paths (`--input_paths`) and the path to the model output from the clustering (`--model_path`)
 
-### TF-IDF (missing)
+#### TF-IDF (missing)
 
+### Multiple instance learning of virtual phenotypes
 
-
-## Models to be implemented
-
-- [ ] Bag of visual words. Requires:
-    [x] Clustering descriptors on training set into $k$ clusters
-    [ ] Clustering data on training set and calculate tf-idf for each per image
-    [ ] Train models on tf-idf vectors
-
-- [ ] Multiple-instance learning approach. Requires an end-to-end model which:
-    1. Given a vocabulary of $k$ terms, infer to which descriptor belongs
-    2. Use the proportion of terms on each sequence to predict whether a sequence is associated with a specific class
-
-- [ ] Transformer approach. Similar to the previous approach but has a self-attention module
+To-do!
