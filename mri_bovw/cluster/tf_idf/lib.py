@@ -10,6 +10,9 @@ import joblib
 import numpy as np
 from pathlib import Path
 
+import pandas as pd
+
+
 def main():
     import argparse
 
@@ -18,6 +21,7 @@ def main():
 
     parser.add_argument("--input_path", dest="input_path", required=True,
                         help="Path to file with cluster count dictionary.")
+    parser.add_argument('--csv', dest='csv', action='store_true')
     parser.add_argument("--idf_source", dest="idf_source",default=None,
                         help="tf-idf output containing idf.")
     parser.add_argument("--output_path", dest="output_path",
@@ -58,6 +62,11 @@ def main():
         p = Path(args.output_path)
         p.parent.mkdir(parents=True, exist_ok=True)
         joblib.dump(output_dict, filename=args.output_path)
+        if args.csv:
+            df1 = pd.DataFrame(output_dict['features'].keys(), columns=['images'])
+            df2 = pd.DataFrame(output_dict['features'].values(), columns=['cluster_'+str(i) for i in range(1,n_clusters+1)])
+            df = pd.concat([df1, df2], axis=1)
+            df.to_csv(args.output_path+".csv", index=None)
     else:
         for k in freq_per_img:
             print("{},{}".format(
