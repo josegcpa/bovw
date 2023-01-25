@@ -18,7 +18,7 @@ It is likely that other requirements work, but these are the ones the package wa
 
 ### Installing with poetry
 
-To install these packages, [`poetry`](https://python-poetry.org/) is recommended. Once installed, one has to simply run `poetry install` in the present folder.
+To install these packages, [`poetry`](https://python-poetry.org/) is recommended. Once poetry is installed, one has to simply run `poetry install` in the present folder and you are good to go.
 
 ## Command line interface usage (recommended)
 
@@ -68,10 +68,10 @@ input (optional): tf-idf file
 output: tf-idf file
 ```
 
-Using the output from the previous step (`descriptor files`), we can calculate the `[tf-idf](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) files`. This quantity is, essentially, the frequency of different descriptors across images weighed by the scarcity (inverse document frequency) of each. 
+Using the output from the previous step (`descriptor files`), we can calculate the [`tf-idf`](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) files. This quantity is, essentially, the frequency of different descriptors across images weighed by the scarcity (inverse document frequency) of each. 
 
 To calculate the `tf-idf files` for each volume, you can simply run `python -m mri_bovw.cluster.tf_idf`. To necessary arguments are: the `--input_path`, which should be the output produced in the previous step when using the `--output_path` flag, and the `--output_path`, which is the produced tf-idf vectors for each volume and the idf used to calculate it (the recommended way of loading the `tf-idf` file is using `joblib.load`, which produces a dictionary containing the tf-idf values as a dictionary (under the `features` key) and the idf values used to calculate this (under the `idf` key)). By storing the idf together with the tf-idf, we can ensure that this is transferrable to other (validation or testing datasets) - to calculate the `tf-idf file` of a `cluster count file` using the idf calculated with another dataset, we simply have to use the `--idf_source` flag pointing to the source tf-idf output.
 
-### Multiple instance learning of virtual phenotypes
+### 2. Multiple instance learning of virtual phenotypes
 
 To-do!

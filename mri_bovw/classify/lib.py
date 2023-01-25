@@ -65,4 +65,3 @@ def main():
         f1 = f1_score(val_y, preds,
                       average="binary" if nc == 2 else "micro")
         print("Fold concluded\n\tF1-score={}".format(f1))
-
