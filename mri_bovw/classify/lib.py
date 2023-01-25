@@ -5,10 +5,10 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split, ShuffleSplit
-from sklearn.metrics import f1_score, accuracy_score, roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import f1_score
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--dataset", required=True,
@@ -25,8 +25,6 @@ if __name__ == "__main__":
                         help="Path to yaml file with model configuration parameters")
     parser.add_argument("--n_workers", default=0, type=int,
                         help="Number of concurrent processes")
-    parser.add_argument("--output_file", default=None,
-                        )
 
     args, unknown_args = parser.parse_known_args()
 
@@ -48,8 +46,9 @@ if __name__ == "__main__":
     X = df.drop(df.columns[-1])
     y = df.columns[-1].values
 
-    cv = ShuffleSplit(args.n_folds, random_state=args.seed)
-    splits = cv.split(X)
+    cv = StratifiedKFold(args.n_folds,
+                         random_state=args.seed)
+    splits = cv.split(X,y)
 
     for i, (train_idxs, val_idxs) in enumerate(splits):
         train_X = X[train_idxs]
@@ -57,11 +56,13 @@ if __name__ == "__main__":
         val_X = X[val_idxs]
         val_y = y[val_idxs]
 
-        model = model(**model_config, random_state=args.seed)
+        model = model(**model_config,
+                      random_state=args.seed)
         model.fit(train_X, train_y)
 
         preds = model.predict(val_X).tolist()
         nc = len(np.unique(val_y))
-        f1 = f1_score(val_y, preds, average="binary" if nc == 2 else "micro")
+        f1 = f1_score(val_y, preds,
+                      average="binary" if nc == 2 else "micro")
         print("Fold concluded\n\tF1-score={}".format(f1))
 
