@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--dataset", required=True,
-                        typr=str,
+                        type=str,
                         help="Path for csv dataset. Class must be the last column.")
     parser.add_argument("--model", required=True,
                         choices=["rf", "svm", "lr"],
@@ -43,11 +43,10 @@ def main():
     else:
         model_config = {}
 
-    X = df.drop(df.columns[-1])
-    y = df.columns[-1].values
+    X = df.drop([df.columns[0], df.columns[-1]], axis=1).values
+    y = df[df.columns[-1]].values
 
-    cv = StratifiedKFold(args.n_folds,
-                         random_state=args.seed)
+    cv = StratifiedKFold(args.n_folds, shuffle=True, random_state=args.seed)
     splits = cv.split(X,y)
 
     for i, (train_idxs, val_idxs) in enumerate(splits):
@@ -56,11 +55,11 @@ def main():
         val_X = X[val_idxs]
         val_y = y[val_idxs]
 
-        model = model(**model_config,
+        clf = model(**model_config,
                       random_state=args.seed)
-        model.fit(train_X, train_y)
+        clf.fit(train_X, train_y)
 
-        preds = model.predict(val_X).tolist()
+        preds = clf.predict(val_X).tolist()
         nc = len(np.unique(val_y))
         f1 = f1_score(val_y, preds,
                       average="binary" if nc == 2 else "micro")
