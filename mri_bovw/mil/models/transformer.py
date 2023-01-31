@@ -87,10 +87,10 @@ class Transformer(nn.Module):
         super().__init__()
         self.n_classes = num_classes
 
-        self._fc1 = nn.Sequential(nn.Linear(2048, 512, bias=True), nn.ReLU())
-        self.layer1 = TransformerLayer(dim=512, heads=8, use_ff=False, use_norm=True)
-        self.layer2 = TransformerLayer(dim=512, heads=8, use_ff=False, use_norm=True)
-        self._fc2 = nn.Linear(512, self.n_classes, bias=True)
+        self._fc1 = nn.Sequential(nn.Linear(128, 128, bias=True), nn.ReLU())
+        self.layer1 = TransformerLayer(dim=128, heads=8, use_ff=False, use_norm=True)
+        self.layer2 = TransformerLayer(dim=128, heads=8, use_ff=False, use_norm=True)
+        self._fc2 = nn.Linear(128, self.n_classes, bias=True)
 
     def forward(self, x):
 
