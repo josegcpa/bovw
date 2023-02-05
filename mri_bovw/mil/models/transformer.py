@@ -83,13 +83,40 @@ class TransformerLayer(nn.Module):
 
 
 class Transformer(nn.Module):
+    def __init__(self, num_classes, input_dim=128, projected_dim=128):
+        super().__init__()
+        self.n_classes = num_classes
+
+        self._fc1 = nn.Sequential(nn.Linear(input_dim, projected_dim, bias=True), nn.ReLU())
+        self.layer1 = TransformerLayer(dim=projected_dim, heads=8, use_ff=False, use_norm=True)
+        self.layer2 = TransformerLayer(dim=projected_dim, heads=8, use_ff=False, use_norm=True)
+        self._fc2 = nn.Linear(128, self.n_classes, bias=True)
+
+    def forward(self, x):
+
+        h = x
+        h = self._fc1(h)
+        h = self.layer1(h)
+        h = self.layer2(h)
+        h = h.mean(dim=1)
+        logits = self._fc2(h)
+
+        return logits
+
+class TransformerNoMHSA(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
         self.n_classes = num_classes
 
         self._fc1 = nn.Sequential(nn.Linear(128, 128, bias=True), nn.ReLU())
-        self.layer1 = TransformerLayer(dim=128, heads=8, use_ff=False, use_norm=True)
-        self.layer2 = TransformerLayer(dim=128, heads=8, use_ff=False, use_norm=True)
+        self.layer1 = nn.Sequential(
+            FeedForward(dim=128, hidden_dim=512),
+            nn.GELU(),
+            nn.LayerNorm(128))
+        self.layer2 = nn.Sequential(
+            FeedForward(dim=128, hidden_dim=512),
+            nn.GELU(),
+            nn.LayerNorm(128))
         self._fc2 = nn.Linear(128, self.n_classes, bias=True)
 
     def forward(self, x):
