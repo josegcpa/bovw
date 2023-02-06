@@ -21,20 +21,18 @@ def main():
                         help="Device to run the model on.")
     parser.add_argument("--seed", default=42, type=int,
                         help="Random seed")
-    parser.add_argument("--n_folds", default=5, type=int,
-                        help="Number of folds")
     parser.add_argument("--n_epochs", default=10, type=int,
                         help="Number of epochs")
     parser.add_argument("--batch_size", default=32, type=int,
                         help="Batch size")
-    parser.add_argument("--model_config", type=str,
-                        help="Path to yaml file with model configuration parameters")
+    parser.add_argument("--slices", default=False, type=int,
+                        help="If it is going to be on a slice or volume basis")
     parser.add_argument("--n_workers", default=0, type=int,
                         help="Number of concurrent processes")
 
     args, unknown_args = parser.parse_known_args()
 
-    dataset = PicaiDataset(args.dataset, args.descriptors, slices=True, n_slices=16)
+    dataset = PicaiDataset(args.dataset, args.descriptors, slices=args.slices, n_slices=16)
 
     train_dataset, val_dataset = random_split(dataset, [int(len(dataset)*0.7), len(dataset)-int(len(dataset)*0.7)],
                                               generator=torch.Generator().manual_seed(args.seed))

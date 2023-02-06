@@ -48,6 +48,7 @@ def volume_dataset(annotations_file, descriptors, n_slices=24, max_kp=100):
 def slice_dataset(annotations_file, descriptors, max_kp=100):
     annotations_file = pd.read_csv(annotations_file)
     ids_labels = [(str(row[0]) + "_" + str(row[1]), row[-1]) for idx, row in annotations_file.iterrows()]
+    ids_labels = select_samples(ids_labels, descriptors)
     ids_labels, data, labels = map(list,
                                  zip(*[(id_label[0], torch.from_numpy(feature), id_label[-1]) for id_label in ids_labels for
                                        feature in
@@ -85,3 +86,16 @@ def central_crop(slices, target=24):
             for i in range(dif//2):
                 slices.pop(0)
     return slices
+
+def select_samples(ids_labels, descriptors):
+    ids_to_remove = []
+    for id_label in ids_labels:
+        if os.path.exists(os.path.join(descriptors, id_label[0] + ".npy")):
+            pass
+        else:
+            ids_to_remove.append(id_label)
+
+    for idx in ids_to_remove:
+        ids_labels.remove(idx)
+
+    return ids_labels
